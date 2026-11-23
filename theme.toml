@@ -2,10 +2,10 @@
 name = "ft-oink-blog-theme"
 license = "Apache 2.0"
 licenselink = "https://github.com/feotime/ft-oink-blog-theme/blob/main/LICENSE"
-description = "A minimal Chinese-first personal blog theme built as a thin layer on the OINK Hugo module: timeline home, single-column reading, offline CJK full-text search"
+description = "A minimal blog theme built as a thin layer on the OINK Hugo module: timeline home, single-column reading, offline CJK full-text search, localized UI (English / 简体中文 / 繁體中文)"
 homepage = "https://github.com/feotime/ft-oink-blog-theme"
 demosite = ""
-tags = ["blog", "minimal", "chinese", "offline-search", "dark-mode", "responsive"]
+tags = ["blog", "minimal", "chinese", "offline-search", "dark-mode", "responsive", "i18n"]
 features = ["offline CJK full-text search", "timeline home / archives / tags", "dark mode", "command palette (Cmd+K)", "single-column reading with optional TOC", "llms.txt and .md outputs"]
 min_version = "0.168.0"
 

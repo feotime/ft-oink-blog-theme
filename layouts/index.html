@@ -16,7 +16,7 @@
     "key" "params.ui.home_intro") -}}
 {{- $identity := partial "ui-param.html" (dict "page" . "key" "intro_identity") -}}
 {{- if not $identity -}}
-  {{- with .Site.Params.copyright.authors }}{{ $identity = printf "你好，我是 %s" . }}{{ end -}}
+  {{- with .Site.Params.copyright.authors }}{{ $identity = T "ft_identity_greeting" (dict "name" .) }}{{ end -}}
 {{- end -}}
 <!doctype html>
 <html{{ partial "shell/document-attrs.html" (dict "page" .) }}>
@@ -47,12 +47,12 @@
             {{ with .Params.description }}<p class="ft-intro__lead">{{ . }}</p>{{ end }}
             {{ end -}}
             {{ with .Content }}<div class="ft-intro__body">{{ . }}</div>{{ end }}
-            <nav class="ft-intro__links" aria-label="站点入口">
+            <nav class="ft-intro__links" aria-label="{{ T "ft_site_links" }}">
               {{ with .OutputFormats.Get "rss" }}
-              <a class="ft-intro__link" href="{{ .RelPermalink }}"><i class="fa-solid fa-rss" aria-hidden="true"></i>RSS 订阅</a>
+              <a class="ft-intro__link" href="{{ .RelPermalink }}"><i class="fa-solid fa-rss" aria-hidden="true"></i>{{ T "ft_rss_subscribe" }}</a>
               {{ end }}
               {{ with site.GetPage "/archives" }}
-              <a class="ft-intro__link" href="{{ .RelPermalink }}">全部归档</a>
+              <a class="ft-intro__link" href="{{ .RelPermalink }}">{{ T "ft_all_archives" }}</a>
               {{ end }}
             </nav>
           </header>

@@ -1,0 +1,7 @@
+# ft-oink-blog-theme 界面文案（繁體中文）。
+ft_identity_greeting: "你好，我是 {{ .name }}"
+ft_posts_count:
+  other: "共 {{ .Count }} 篇"
+ft_all_archives: "全部歸檔"
+ft_rss_subscribe: "RSS 訂閱"
+ft_site_links: "站點入口"

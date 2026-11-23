@@ -7,7 +7,7 @@
   {{ with .Params.description }}<p class="ft-archives__lead">{{ . }}</p>{{ end }}
   {{- $pages := .Pages.ByDate.Reverse -}}
   {{- if eq .Data.Plural "series" }}{{ $pages = partial "series-pages.html" . }}{{ end -}}
-  <p class="ft-archives__count">共 {{ len $pages }} 篇</p>
+  <p class="ft-archives__count">{{ T "ft_posts_count" (len $pages) }}</p>
   {{ partial "ft/timeline.html" (dict "pages" $pages) }}
 </div>
 {{ end -}}

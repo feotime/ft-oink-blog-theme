@@ -13,7 +13,7 @@
 		{{- $segs = $segs | append (printf `<time datetime="%s">%s</time>` (.Date.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
 		{{- end -}}
 		{{- if partial "reading-time-enabled.html" . -}}
-		{{- $segs = $segs | append (printf `<span>%s 字</span>` (.WordCount | string)) (printf `<span>%d 分钟</span>` $minutes) -}}
+		{{- $segs = $segs | append (printf `<span>%s</span>` (T "post_word_count" (dict "Count" .WordCount))) (printf `<span>%s</span>` (T "post_reading_minutes" (dict "Minutes" $minutes))) -}}
 		{{- end -}}
 		{{- with $segs }}
 		<div class="ft-article__meta">{{ delimit $segs ` <span class="ft-article__meta-sep" aria-hidden="true">&middot;</span> ` | safeHTML }}</div>

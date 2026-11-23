@@ -10,7 +10,7 @@
     {{- with .Page }}
     <li class="ft-taxonomy__item">
       <a class="ft-taxonomy__name" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
-      <span class="ft-taxonomy__count">{{ $count }} 篇</span>
+      <span class="ft-taxonomy__count">{{ T "ft_posts_count" $count }}</span>
     </li>
     {{- end }}
     {{- end }}

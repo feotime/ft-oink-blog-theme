@@ -4,7 +4,7 @@
   {{ partial "page-title.html" . }}
   {{- $blogPages := (where .Site.RegularPages "Type" "blog").ByDate.Reverse -}}
   {{ with .Params.description }}<p class="ft-archives__lead">{{ . }}</p>{{ end }}
-  <p class="ft-archives__count">共 {{ len $blogPages }} 篇</p>
+  <p class="ft-archives__count">{{ T "ft_posts_count" (len $blogPages) }}</p>
   {{ partial "ft/timeline.html" (dict "pages" $blogPages) }}
 </div>
 {{ end -}}

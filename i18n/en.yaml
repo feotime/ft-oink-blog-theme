@@ -1,0 +1,8 @@
+# ft-oink-blog-theme UI strings (English). Merged over OINK's translations.
+ft_identity_greeting: "Hi, I'm {{ .name }}"
+ft_posts_count:
+  one: "{{ .Count }} post"
+  other: "{{ .Count }} posts"
+ft_all_archives: "All archives"
+ft_rss_subscribe: "RSS feed"
+ft_site_links: "Site links"
