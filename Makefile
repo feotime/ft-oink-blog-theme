@@ -19,12 +19,14 @@ build-example:
 	HUGO_MODULE_REPLACEMENTS='github.com/pgsty/oink -> $(abspath ../oink),github.com/feotime/ft-oink-blog-theme -> $(abspath .)' \
 		$(HUGO) --source exampleSite --cleanDestinationDir --gc --minify --environment production
 
-# 发布：公开仓库永远保持"单一根提交"——每次发布用 commit-tree 从当前
-# 子目录树整体生成一个全新根提交，强推覆盖（在站点仓库根执行）。
-# 打 tag 见 README「发布说明」。
+# 发布：向公开仓库追加一个发布提交（父提交 = 远端 main 当前指向；空仓库则建根提交），
+# 历史线性追加，不强推。公开历史的基线是 2026-11-23 的一次性单根提交初始化。
+MSG ?= 更新主题内容
 publish:
 	@cd "$(shell git rev-parse --show-toplevel)" && \
-	 TREE=$$(git rev-parse $(SUBTREE_PREFIX)^{tree}) && \
-	 NEW=$$(git commit-tree $$TREE -m "feat: ft-oink-blog-theme —— 基于 OINK 的极简中文博客主题") && \
-	 git push -f $(THEME_REPO) "$$NEW":refs/heads/main && \
-	 echo "已发布根提交 $$NEW → $(THEME_REPO) main"
+	 TREE=$$(git rev-parse "HEAD:$(SUBTREE_PREFIX)") && \
+	 PARENT=$$(git ls-remote $(THEME_REPO) refs/heads/main | cut -f1) && \
+	 if [ -n "$$PARENT" ]; then PFLAGS="-p $$PARENT"; else PFLAGS=""; fi && \
+	 NEW=$$(git commit-tree $$TREE $$PFLAGS -m "$(MSG)") && \
+	 git push $(THEME_REPO) "$$NEW":refs/heads/main && \
+	 echo "已发布 $$NEW → $(THEME_REPO) main"

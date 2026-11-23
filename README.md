@@ -146,18 +146,19 @@ hugo mod get -u github.com/pgsty/oink
 ## 发布说明（维护者）
 
 主题源码随博客仓库放在 `ft-oink-blog-theme/` 子目录（普通文件，站点构建与 CI 直接依赖它）。
-公开仓库采用**单一根提交**模式：每次发布用 commit-tree 从当前子目录树生成全新根提交、
-整体强推——外部看到的永远是一个干净的提交，不携带内部开发历史。
+公开仓库的历史是**线性追加**的：初始化为一个单根提交（2026-11-23，一次性清洗内部历史），
+之后每次发布在其上追加一个发布提交，不强推。
 
 ```bash
 # 0. 首次在 GitHub 建一个空公共仓库（不要初始化 README/LICENSE）。
 
-# 1. 发布 main（在主题目录执行；每次整体重写远端 main）：
-make publish
+# 1. 发布（在主题目录执行；自动以远端 main 为父提交追加一个发布提交）：
+make publish                                # 或 make publish MSG="feat: 本次更新说明"
 
-# 2. 打版本 tag 并推送：
-git -C "$(git rev-parse --show-toplevel)" tag -f v0.1.2 "$(git -C "$(git rev-parse --show-toplevel)" ls-remote git@github.com:feotime/ft-oink-blog-theme.git refs/heads/main | cut -f1)"
-git -C "$(git rev-parse --show-toplevel)" push -f git@github.com:feotime/ft-oink-blog-theme.git v0.1.2
+# 2. 打版本 tag 并推送（指向远端 main 的当前提交）：
+SHA=$(git ls-remote git@github.com:feotime/ft-oink-blog-theme.git refs/heads/main | cut -f1)
+git tag v0.1.3 "$SHA"
+git push git@github.com:feotime/ft-oink-blog-theme.git v0.1.3
 
 # 3. 之后每次改主题：提交进博客仓库 → make publish → 换个版本号重复第 2 步。
 ```
