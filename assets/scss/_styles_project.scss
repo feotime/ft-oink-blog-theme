@@ -1,0 +1,485 @@
+// ============================================================================
+// FT 设计层 — 暖纸·墨色 · 博客化重设计
+// ----------------------------------------------------------------------------
+// 本文件是主题预留的站点定制层（td/_main.scss 最后导入）。不改主题一行代码，
+// 升级上游（go.mod + ./oink 副本）后只需回归本文件与站点级模板。
+//
+// 约定：
+// - 站点锁定 paper 预设（hugo.yaml: preset: paper, preset_menu: false），
+//   令牌覆盖因此锚定 [data-td-preset='paper']，与主题预设块同特异性、
+//   靠本文件的源顺序胜出；暗色块用组合选择器保持 (0,2,0) 特异性对齐。
+// - 全部新组件（ft-*）只用主题的 CSS 令牌取色，暗色模式自动成立。
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+// 1. 令牌微调：在 paper 基调上收敛圆角与阴影，更接近纸面
+// ---------------------------------------------------------------------------
+
+[data-td-preset='paper'] {
+  --td-code-radius: 8px;
+  --td-brand-shadow-sm: 0 1px 6px rgba(33, 32, 28, 0.05);
+  --td-brand-shadow-md: 0 10px 30px rgba(33, 32, 28, 0.1);
+}
+
+[data-td-preset='paper'][data-bs-theme='dark'],
+[data-td-preset='paper'] [data-bs-theme='dark'] {
+  --td-code-radius: 8px;
+  --td-brand-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --td-brand-shadow-md: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+// 选中文本用一层很薄的强调色；暗色下提高不透明度保证可感知。
+::selection {
+  background: rgba(43, 95, 140, 0.16);
+}
+
+[data-bs-theme='dark'] ::selection {
+  background: rgba(125, 181, 230, 0.28);
+}
+
+// ---------------------------------------------------------------------------
+// 2. 中文长文排版：字号、行高、标点与中西文间距
+// ---------------------------------------------------------------------------
+
+// 西文负字距是为 Inter 设计的，中文标题归零，行高放宽到更适合汉字的节奏。
+.td-content {
+  font-size: 1.0625rem; // 17px
+  line-height: 1.85;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: 0;
+    line-height: 1.45;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    line-height: 1.4;
+  }
+
+  h2 {
+    font-size: 1.375rem;
+    margin-block: 2.4em 0.9em;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    margin-block: 1.9em 0.7em;
+  }
+
+  > p {
+    margin-block: 1.15em;
+  }
+
+  li {
+    margin-block: 0.3em;
+  }
+
+  > table {
+    font-size: 0.95rem;
+  }
+
+  img {
+    border-radius: 8px;
+  }
+
+  figcaption,
+  .figure-caption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--bs-tertiary-color);
+    text-align: center;
+  }
+
+  pre {
+    line-height: 1.65;
+  }
+
+  hr {
+    border-top: 1px solid var(--td-hairline);
+    opacity: 1;
+  }
+}
+
+// 文章页大标题：从文档级的 2.25rem 收到杂志级的 1.7rem。
+.td-content > .td-page-heading h1,
+.td-page-heading h1 {
+  font-size: 1.7rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+// 渐进增强：中西文自动加间距（text-autospace）、行首标点悬挂。
+// 两者都还不是基线特性，支持的浏览器生效，其余照常渲染。
+body {
+  hanging-punctuation: first allow-end;
+}
+
+@supports (text-autospace: normal) {
+  .td-content,
+  .ft-intro__lead,
+  .ft-archives__lead {
+    text-autospace: normal;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 3. 阅读宽度：单栏 46rem 居中；目录栏只在 xl 及以上出现
+// ---------------------------------------------------------------------------
+
+.td-shell-article {
+  max-width: 46rem;
+}
+
+.td-shell-layout--w-wide .td-shell-article {
+  max-width: 72rem;
+}
+
+// 首页、归档、标签与独立页走扁平容器（td-main），自行约束栏宽。
+.td-main > .td-content.ft-home,
+.td-main > .td-content.ft-archives,
+.td-main > .td-content.ft-taxonomy,
+.td-main > .td-content.ft-term,
+.td-main > .td-content.ft-page {
+  max-width: 46rem;
+  margin-inline: auto;
+  padding: 3rem clamp(1rem, 4vw, 2rem) 4rem;
+}
+
+// 侧栏已关（content/post 的 cascade），主题会把目录搬进"侧栏抽屉"——
+// 那个抽屉不存在，所以 xl 以下直接隐藏目录，保持单栏沉浸阅读。
+@media (max-width: 1199.98px) {
+  .td-shell-toc,
+  .td-shell-toc-float {
+    display: none !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 4. 首页：简介块
+// ---------------------------------------------------------------------------
+
+.ft-intro {
+  padding-top: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ft-intro__title {
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+  margin-bottom: 0.6rem;
+}
+
+.ft-intro__lead {
+  font-size: 1.02rem;
+  color: var(--bs-secondary-color);
+  margin-bottom: 1.1rem;
+}
+
+// slogan 格局（params.ui.home_intro: slogan）：主张做大标题，身份行降为小字。
+.ft-intro__identity {
+  font-size: 0.95rem;
+  color: var(--bs-secondary-color);
+  margin-top: 0.9rem;
+}
+
+// compact 格局（params.ui.home_intro: compact）：一行小字介绍完，无大标题。
+.ft-intro__compact {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--bs-secondary-color);
+  margin: 0;
+}
+
+.ft-intro__body {
+  font-size: 0.95rem;
+  color: var(--bs-secondary-color);
+}
+
+.ft-intro__links {
+  display: flex;
+  gap: 1.4rem;
+  margin-top: 1.2rem;
+}
+
+.ft-intro__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.875rem;
+  color: var(--bs-tertiary-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-link-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.ft-home__pagination {
+  margin-top: 2.75rem;
+
+  .pagination {
+    justify-content: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 5. 时间线：首页与归档共用的按年分组列表
+// ---------------------------------------------------------------------------
+
+.ft-timeline {
+  margin-top: 2.25rem;
+}
+
+.ft-timeline__year + .ft-timeline__year {
+  margin-top: 2.25rem;
+}
+
+.ft-timeline__year-label {
+  font-family: var(--td-meta-font-family, var(--td-code-font-family));
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--bs-tertiary-color);
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--td-hairline);
+}
+
+.ft-timeline__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ft-timeline__item {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.62rem 0.6rem;
+  margin: 0 -0.6rem;
+  border-radius: 8px;
+  transition: background-color var(--td-motion-duration, 0.15s) var(--td-shell-ease, ease);
+
+  &:hover {
+    background: var(--td-shell-primary-wash);
+  }
+
+  &:focus-within {
+    background: var(--td-shell-primary-wash);
+  }
+}
+
+.ft-timeline__date {
+  flex: 0 0 3.2em;
+  font-family: var(--td-meta-font-family, var(--td-code-font-family));
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bs-tertiary-color);
+}
+
+.ft-timeline__title {
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--bs-body-color);
+  text-decoration: none;
+  min-width: 0;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-link-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.ft-timeline__tags {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 0.85rem;
+  white-space: nowrap;
+}
+
+.ft-timeline__tag {
+  font-size: 0.8rem;
+  color: var(--bs-tertiary-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+  }
+}
+
+// 窄屏收起标签列，日期与标题贴近排版。
+@media (max-width: 575.98px) {
+  .ft-timeline__item {
+    gap: 0.8rem;
+  }
+
+  .ft-timeline__tags {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 6. 归档页与标签页
+// ---------------------------------------------------------------------------
+
+// 标签总览：一行一个标签的安静列表。
+.ft-taxonomy__list {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+}
+
+.ft-taxonomy__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.62rem 0.6rem;
+  margin: 0 -0.6rem;
+  border-radius: 8px;
+
+  &:hover {
+    background: var(--td-shell-primary-wash);
+  }
+}
+
+.ft-taxonomy__name {
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--bs-body-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+}
+
+.ft-taxonomy__count {
+  margin-inline-start: auto;
+  font-family: var(--td-meta-font-family, var(--td-code-font-family));
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bs-tertiary-color);
+}
+
+
+.ft-archives__lead {
+  color: var(--bs-secondary-color);
+  margin-bottom: 0.25rem;
+}
+
+.ft-archives__count {
+  font-family: var(--td-meta-font-family, var(--td-code-font-family));
+  font-size: 0.85rem;
+  color: var(--bs-tertiary-color);
+  margin-bottom: 0;
+}
+
+.ft-archives .ft-timeline {
+  margin-top: 1.75rem;
+}
+
+// ---------------------------------------------------------------------------
+// 7. 文章页：元信息行与安静的标签
+// ---------------------------------------------------------------------------
+
+.ft-article__head {
+  margin-bottom: 1.75rem;
+}
+
+.ft-article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
+  font-family: var(--td-meta-font-family, var(--td-code-font-family));
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bs-secondary-color);
+  margin-top: 0.4rem;
+}
+
+.ft-article__meta a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+  }
+}
+
+.ft-article__meta-sep {
+  opacity: 0.55;
+}
+
+.ft-article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+}
+
+.ft-article__tag {
+  font-size: 0.82rem;
+  color: var(--bs-tertiary-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+}
+
+// 导语（description）维持主题 .lead 的安静处理，稍收紧。
+.td-content > .lead {
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+
+// ---------------------------------------------------------------------------
+// 8. 徽章降噪：列表与元信息里的标签从实心 chip 退成文本
+//    （/post/ 区块列表页仍用主题 blog-row，一并压安静）
+// ---------------------------------------------------------------------------
+
+.td-blog-meta__terms .td-badge--solid,
+.td-blog-posts-list .td-badge--solid,
+.td-blog-table .td-badge--solid {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  color: var(--bs-tertiary-color);
+
+  i {
+    display: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: transparent;
+    color: var(--bs-link-hover-color);
+  }
+}

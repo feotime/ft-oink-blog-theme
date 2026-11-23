@@ -1,0 +1,9 @@
+{{- /* FT 站点级覆盖：兜底模板（独立页如「关于」）。
+     主题的 all.html 只输出正文，缺页面标题与 .td-content 排版容器；
+     这里补上标题与容器，让独立页与博客的排版节奏一致。 */ -}}
+{{ define "main" -}}
+<div class="td-content ft-page">
+  {{ if .Title }}{{ partial "page-title.html" . }}{{ end }}
+  {{ partial "content/render.html" . -}}
+</div>
+{{ end }}

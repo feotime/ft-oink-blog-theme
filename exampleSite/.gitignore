@@ -1,0 +1,5 @@
+go.mod
+go.sum
+public/
+resources/
+.hugo_build.lock

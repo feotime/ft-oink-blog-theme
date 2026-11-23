@@ -1,0 +1,13 @@
+{{- /* FT 标签页：单个标签下的文章时间线。
+     站点级覆盖主题 term.html：去掉左侧栏与文档头；series 等特殊
+     taxonomy 保留阅读顺序的兜底。 */ -}}
+{{ define "main" -}}
+<div class="td-content ft-term">
+  <div class="td-page-heading"><h1>#{{ .Title }}</h1></div>
+  {{ with .Params.description }}<p class="ft-archives__lead">{{ . }}</p>{{ end }}
+  {{- $pages := .Pages.ByDate.Reverse -}}
+  {{- if eq .Data.Plural "series" }}{{ $pages = partial "series-pages.html" . }}{{ end -}}
+  <p class="ft-archives__count">共 {{ len $pages }} 篇</p>
+  {{ partial "ft/timeline.html" (dict "pages" $pages) }}
+</div>
+{{ end -}}

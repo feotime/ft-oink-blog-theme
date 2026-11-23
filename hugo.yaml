@@ -1,0 +1,39 @@
+# ft-oink-blog-theme — 基于 OINK 的极简中文博客主题（默认参数）。
+#
+# 这里只带 params 默认值（站点配置里的同名键会覆盖）；
+# markup / outputs / languages 属于站点级配置，Hugo 不从主题继承，
+# 必需的最小站点配置见 README 与 exampleSite/hugo.yaml。
+
+module:
+  imports:
+    - path: github.com/pgsty/oink
+  hugoVersion:
+    extended: true
+    min: 0.168.0
+
+params:
+  # 中文全文检索：构建时生成 JSON 索引，中文按连续子串匹配，
+  # 支持拼音输入法安全与章节深链。检索入口在每一页的导航栏（Cmd+K / /）。
+  offline_search: true
+  ui:
+    # 视觉基调锁定 paper（暖纸·墨色），设计层覆盖见 assets/scss/_styles_project.scss。
+    # preset_menu 关掉预设切换器，暗色开关保留在外观菜单里。
+    preset: paper
+    preset_menu: false
+    dark_mode: true
+    # 首页简介区格局（导航栏始终显示站名，四种都能避免与导航栏重复）：
+    #   title    站名做大标题（原样式）
+    #   identity 身份行做大标题（推荐）：h1 = intro_identity，副句 = description
+    #   slogan   description 做大标题主张，intro_identity 降为小字
+    #   compact  无大标题，一行小字 = intro_identity——description
+    home_intro: identity
+    # 身份行文案不设主题默认（每个站的人不一样）：站点可用 params.ui.intro_identity
+    # 自定义；缺省时由顶层 params.copyright.authors 生成 "你好，我是 <authors>"，
+    # 两者都缺省则回退站点标题。
+    # 文章所在 section；首页/归档/标签的时间线按 `where .Site.RegularPages "Type" "blog"` 取数，
+    # 依赖 content/post/_index.md 的 cascade type: blog（见 exampleSite/content）。
+    blog_section: post
+    blog_index: list
+    blog_index_size: 12
+    footer_style: slim
+    # featured_image: banner   # 题图同时显示在文章里：banner / wash / hero

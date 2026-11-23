@@ -1,0 +1,34 @@
+{{- /* FT 文章头：大标题 + 日期·字数·分钟 + 标签行。
+     站点级覆盖主题 blog/_td-content.html：去掉作者/栏目的文档向元信息，
+     保留题图 banner/wash、系列条、description 导语与 page-end（上下篇/分享/评论钩子）。 */ -}}
+{{- $featured := partial "featured-image-mode.html" . -}}
+<div class="td-content ft-article">
+	{{ if eq $featured "banner" }}{{ partial "featured-image-article.html" (dict "page" . "mode" $featured) }}
+	{{ end }}{{ if eq $featured "wash" }}<div class="td-article-header td-article-header--wash">{{ partial "featured-image-article.html" (dict "page" . "mode" $featured) }}
+	{{ end }}<header class="ft-article__head">
+		{{ partial "page-title.html" . }}
+		{{- $minutes := .ReadingTime }}{{ if lt $minutes 1 }}{{ $minutes = 1 }}{{ end }}
+		{{- $segs := slice -}}
+		{{- if not .Date.IsZero -}}
+		{{- $segs = $segs | append (printf `<time datetime="%s">%s</time>` (.Date.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
+		{{- end -}}
+		{{- if partial "reading-time-enabled.html" . -}}
+		{{- $segs = $segs | append (printf `<span>%s 字</span>` (.WordCount | string)) (printf `<span>%d 分钟</span>` $minutes) -}}
+		{{- end -}}
+		{{- with $segs }}
+		<div class="ft-article__meta">{{ delimit $segs ` <span class="ft-article__meta-sep" aria-hidden="true">&middot;</span> ` | safeHTML }}</div>
+		{{- end }}
+		{{- with .GetTerms "tags" }}
+		<p class="ft-article__tags">
+			{{- range . }}<a class="ft-article__tag" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>{{ end }}
+		</p>
+		{{- end }}
+	</header>
+	{{ if eq $featured "wash" }}</div>
+	{{ end -}}
+	{{ partial "series-strip.html" . -}}
+	{{ with .Params.description }}<div class="lead">{{ . | markdownify }}</div>{{ end }}
+	{{ .Render "_td-content-after-header" -}}
+	{{ partial "content/render.html" . }}
+	{{ partial "page-end.html" . -}}
+</div>

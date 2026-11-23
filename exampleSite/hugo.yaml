@@ -1,0 +1,53 @@
+# ft-oink-blog-theme 示例站 — 可独立构建预览的最小中文博客配置。
+#
+#   hugo server --source exampleSite   （或主题目录下 `make example`）
+#
+# 配置保持发布形态：主题按 module path 拉取（含上游 OINK，走模块代理）。
+# 主题维护者的离线预览由 `make example` 通过环境变量注入本地路径替换，
+# 不写进这份配置——第三方克隆本仓库后无需任何本地副本即可构建。
+
+title: FT 的博客
+baseURL: https://example.org/
+defaultContentLanguage: zh
+enableGitInfo: true
+enableRobotsTXT: true
+enableEmoji: true
+timeZone: Asia/Shanghai
+
+languages:
+  zh:
+    label: 简体中文
+    locale: zh-CN
+    weight: 1
+    title: FT 的博客
+    hasCJKLanguage: true
+    params:
+      description: 记录技术、实践与生活。
+
+# OINK 的 Markdown 组件依赖这组 Goldmark 设置，不要删。
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+    parser:
+      attribute:
+        block: true
+      wrapStandAloneImageWithinParagraph: false
+  highlight:
+    noClasses: false
+
+# 每个页面额外输出 .md 纯文本，首页输出 llms.txt，方便 AI 阅读与引用。
+outputs:
+  home: [HTML, RSS, markdown, LLMS]
+  page: [HTML, markdown]
+  section: [HTML, RSS, print, markdown]
+
+params:
+  copyright:
+    authors: FT
+    from_year: 2026
+  footer_center_info: ''
+
+module:
+  imports:
+    - path: github.com/feotime/ft-oink-blog-theme

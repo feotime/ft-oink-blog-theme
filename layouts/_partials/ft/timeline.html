@@ -1,0 +1,27 @@
+{{- /* FT 时间线：按年分组的文章列表，首页与归档页共用。
+     输入：dict "pages"（已按时间倒序的页集合）。
+     年份分组用 div 而非 section：主题会给 td-default main 里的
+     section 加文档向的块级 padding，会破坏时间线的紧凑节奏。 */ -}}
+{{- $pages := .pages -}}
+<div class="ft-timeline">
+  {{- range $pages.GroupByDate "2006" }}
+  <div class="ft-timeline__year">
+    <h2 class="ft-timeline__year-label">{{ .Key }}</h2>
+    <ul class="ft-timeline__list">
+      {{- range .Pages }}
+      <li class="ft-timeline__item">
+        {{- if not .Date.IsZero }}
+        <time class="ft-timeline__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01-02" }}</time>
+        {{- end }}
+        <a class="ft-timeline__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{- with .GetTerms "tags" }}
+        <span class="ft-timeline__tags">
+          {{- range . }}<a class="ft-timeline__tag" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>{{ end }}
+        </span>
+        {{- end }}
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+</div>

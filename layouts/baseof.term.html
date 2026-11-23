@@ -1,0 +1,22 @@
+{{- /* FT 站点层覆盖：taxonomy/term 页使用扁平外壳（term 变体）（navbar + main + footer）。
+     主题的 baseof.taxonomy/term.html 是带左侧栏的文档 shell，不合博客气质；
+     标签页在站点层已重写为时间线/文本列表，与首页归档共用扁平结构。 */ -}}
+{{- .Page.Store.Set "tdOutputFormat" "html" -}}
+<!doctype html>
+<html{{ partial "shell/document-attrs.html" (dict "page" .) }}>
+  <head>
+    {{ partial "head.html" . }}
+  </head>
+  <body class="td-{{ .Kind }}{{ with .Page.Params.body_class }} {{ . }}{{ end }}">
+    {{ partial "skip-link.html" . }}
+    {{ if partial "shell/navbar-enabled.html" . }}{{ partial "navbar.html" . }}{{ end }}
+    <div class="container-fluid td-default td-outer">
+      <main id="td-main-content" class="td-main" tabindex="-1">
+        {{ partial "version-banner.html" . }}
+        {{ block "main" . }}{{ end }}
+      </main>
+      {{ partial "footer.html" . }}
+    </div>
+    {{ partial "scripts.html" . }}
+  </body>
+</html>

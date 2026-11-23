@@ -1,0 +1,12 @@
+ft-oink-blog-theme is a blog theme derived from OINK
+(https://github.com/pgsty/oink), which is itself derived from
+Docsy (https://github.com/google/docsy).
+
+Copyright 2018 Google LLC and Docsy contributors (Docsy).
+Copyright 2026 PGSTY contributors (OINK).
+Independent theme work is Copyright 2026 the ft-oink-blog-theme authors.
+
+The whole chain is licensed under the Apache License 2.0; the full license
+is in LICENSE. Upstream notices remain in effect: OINK's NOTICE records its
+Docsy derivation and third-party browser dependencies (see OINK's
+VENDOR.json), which this theme inherits through the module dependency.

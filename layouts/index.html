@@ -1,0 +1,72 @@
+{{- /* FT 首页：列表即首页。
+     站点级自包含模板，覆盖主题 landing：顶部简介块 + 按年分组的时间线。
+     结构对齐主题扁平 baseof（navbar + main + footer），无侧栏、无右栏。
+
+     简介区格局由 params.ui.home_intro 选择（校验失败回退 identity）：
+     - title    站名做大标题（导航栏会同名，慎用）
+     - identity 身份行做大标题（intro_identity，缺省由 copyright.authors 生成），副句 = description
+     - slogan   description 做大标题主张，intro_identity 降为小字
+     - compact  无大标题，一行小字 = intro_identity——description（附视觉隐藏 h1）*/ -}}
+{{- .Page.Store.Set "tdOutputFormat" "html" -}}
+{{- $introMode := partial "validate.html" (dict
+    "value" (partial "ui-param.html" (dict "page" . "key" "home_intro"))
+    "kind" "enum"
+    "allowed" (slice "title" "identity" "slogan" "compact")
+    "fallback" "identity"
+    "key" "params.ui.home_intro") -}}
+{{- $identity := partial "ui-param.html" (dict "page" . "key" "intro_identity") -}}
+{{- if not $identity -}}
+  {{- with .Site.Params.copyright.authors }}{{ $identity = printf "你好，我是 %s" . }}{{ end -}}
+{{- end -}}
+<!doctype html>
+<html{{ partial "shell/document-attrs.html" (dict "page" .) }}>
+  <head>
+    {{ partial "head.html" . }}
+  </head>
+  <body class="td-home{{ with .Page.Params.body_class }} {{ . }}{{ end }}">
+    {{ partial "skip-link.html" . }}
+    {{ if partial "shell/navbar-enabled.html" . }}{{ partial "navbar.html" . }}{{ end }}
+    <div class="container-fluid td-default td-outer">
+      <main id="td-main-content" class="td-main" tabindex="-1">
+        <div class="td-content ft-home">
+          <header class="ft-intro" data-td-home-intro="{{ $introMode }}">
+            {{ if eq $introMode "compact" }}
+            <h1 class="visually-hidden">{{ .Title }}</h1>
+            {{- $compact := "" -}}
+            {{- with $identity }}{{ $compact = . }}{{ end -}}
+            {{- with .Params.description }}
+              {{- if $compact }}{{ $compact = printf "%s——%s" $compact . }}{{ else }}{{ $compact = . }}{{ end -}}
+            {{ end -}}
+            {{- if not $compact }}{{ $compact = .Title }}{{ end }}
+            <p class="ft-intro__compact">{{ $compact }}</p>
+            {{ else if eq $introMode "slogan" }}
+            <h1 class="ft-intro__title">{{ .Params.description | default .Title }}</h1>
+            {{ with $identity }}<p class="ft-intro__identity">{{ . }}</p>{{ end }}
+            {{ else }}
+            <h1 class="ft-intro__title">{{ if eq $introMode "identity" }}{{ $identity | default .Title }}{{ else }}{{ .Title }}{{ end }}</h1>
+            {{ with .Params.description }}<p class="ft-intro__lead">{{ . }}</p>{{ end }}
+            {{ end -}}
+            {{ with .Content }}<div class="ft-intro__body">{{ . }}</div>{{ end }}
+            <nav class="ft-intro__links" aria-label="站点入口">
+              {{ with .OutputFormats.Get "rss" }}
+              <a class="ft-intro__link" href="{{ .RelPermalink }}"><i class="fa-solid fa-rss" aria-hidden="true"></i>RSS 订阅</a>
+              {{ end }}
+              {{ with site.GetPage "/archives" }}
+              <a class="ft-intro__link" href="{{ .RelPermalink }}">全部归档</a>
+              {{ end }}
+            </nav>
+          </header>
+          {{- $blogPages := where .Site.RegularPages "Type" "blog" -}}
+          {{- $size := partial "validate.html" (dict
+              "value" (partial "ui-param.html" (dict "page" . "key" "blog_index_size"))
+              "kind" "int" "min" 1 "fallback" 12 "key" "params.ui.blog_index_size") -}}
+          {{- $pager := .Paginate ($blogPages.ByDate.Reverse) $size -}}
+          {{ partial "ft/timeline.html" (dict "pages" $pager.Pages) }}
+          <div class="ft-home__pagination">{{ partial "pagination.html" . }}</div>
+        </div>
+      </main>
+      {{ partial "footer.html" . }}
+    </div>
+    {{ partial "scripts.html" . }}
+  </body>
+</html>

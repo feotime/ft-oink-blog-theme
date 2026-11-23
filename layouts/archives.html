@@ -1,0 +1,10 @@
+{{- /* FT 归档页：全量文章按年分组，配合主题扁平 baseof（navbar + main + footer）。 */ -}}
+{{ define "main" -}}
+<div class="td-content ft-archives">
+  {{ partial "page-title.html" . }}
+  {{- $blogPages := (where .Site.RegularPages "Type" "blog").ByDate.Reverse -}}
+  {{ with .Params.description }}<p class="ft-archives__lead">{{ . }}</p>{{ end }}
+  <p class="ft-archives__count">共 {{ len $blogPages }} 篇</p>
+  {{ partial "ft/timeline.html" (dict "pages" $blogPages) }}
+</div>
+{{ end -}}

@@ -1,0 +1,19 @@
+{{- /* FT 标签总览：所有标签的安静文本列表。
+     站点级覆盖主题 taxonomy.html：去掉文档向的图标头与卡片墙。 */ -}}
+{{ define "main" -}}
+<div class="td-content ft-taxonomy">
+  <div class="td-page-heading"><h1>{{ .Title }}</h1></div>
+  {{ with .Params.description }}<p class="ft-archives__lead">{{ . }}</p>{{ end }}
+  <ul class="ft-taxonomy__list">
+    {{- range .Data.Terms.ByCount }}
+    {{- $count := .Count }}
+    {{- with .Page }}
+    <li class="ft-taxonomy__item">
+      <a class="ft-taxonomy__name" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
+      <span class="ft-taxonomy__count">{{ $count }} 篇</span>
+    </li>
+    {{- end }}
+    {{- end }}
+  </ul>
+</div>
+{{ end -}}
