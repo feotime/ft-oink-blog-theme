@@ -483,3 +483,115 @@ body {
     color: var(--bs-link-hover-color);
   }
 }
+
+// ---------------------------------------------------------------------------
+// 10. 移动端目录抽屉（<xl）：文章顶栏按钮 + 右滑面板。
+//     桌面端（≥xl）保持右侧悬浮目录，整节由媒体查询隔离，互不影响。
+// ---------------------------------------------------------------------------
+
+.ft-mobile-toc-btn {
+  display: none;
+  margin-inline-start: 0.25rem;
+}
+
+@media (max-width: 1199.98px) {
+  .ft-mobile-toc-btn {
+    display: inline-flex;
+  }
+}
+
+.ft-mobile-toc {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+  .ft-mobile-toc-toggle:checked ~ .ft-mobile-toc {
+    display: block;
+  }
+
+  // 打开时锁定正文滚动（:has 渐进增强，不支持时仅无锁滚动）
+  body:has(.ft-mobile-toc-toggle:checked) {
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1200px), print {
+  .ft-mobile-toc,
+  .ft-mobile-toc-btn {
+    display: none !important;
+  }
+}
+
+.ft-mobile-toc {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+}
+
+.ft-mobile-toc__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--td-shell-scrim);
+}
+
+.ft-mobile-toc__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: MIN(320px, 86vw); /* 大写 MIN：避免 LibSass 编译期求值 */
+  background: var(--bs-body-bg);
+  border-left: 1px solid var(--td-hairline);
+  box-shadow: var(--td-shell-shadow-lg);
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+.ft-mobile-toc__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--td-hairline);
+}
+
+.ft-mobile-toc__title {
+  font-weight: 700;
+}
+
+.ft-mobile-toc__close {
+  color: var(--td-shell-muted-fg);
+}
+
+.ft-mobile-toc__close-x {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.ft-mobile-toc__body {
+  font-size: 0.95rem;
+
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav ul ul {
+    padding-left: 1rem;
+  }
+
+  li {
+    margin-block: 0.35em;
+  }
+
+  a {
+    color: var(--bs-body-color);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--bs-link-hover-color);
+    }
+  }
+}
