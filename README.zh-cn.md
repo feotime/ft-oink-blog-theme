@@ -79,16 +79,16 @@ module:
 
 ```
 content/
-├── _index.md          # 首页：title + description（一句话简介）
+├── _index.md          # 首页：设 home_html: true 后，正文（任意 HTML）即整个首页
 ├── about.md           # 关于页（menus.main 挂主导航）
 ├── archives.md        # 归档页：layout: archives + menus.main
 ├── tags/_index.md     # 标签导航：title + menus.main
-└── post/
-    ├── _index.md      # cascade: type: blog / sidebar_enabled: false / breadcrumb: false …
-    └── my-first-post.md
+└── blog/
+    ├── _index.md      # /blog/ 时间线；cascade: type: blog / sidebar_enabled: false …
+    └── my-first-post.md   # /blog/my-first-post/
 ```
 
-`post/_index.md` 的完整 cascade 直接抄 [exampleSite/content/post/_index.md](exampleSite/content/post/_index.md)。跑起来：
+`blog/_index.md` 的完整 cascade 直接抄 [exampleSite/content/blog/_index.md](exampleSite/content/blog/_index.md)。跑起来：
 
 ```bash
 hugo server
@@ -109,7 +109,7 @@ hugo server
 | `ui.dark_mode` | `true` | 暗色模式与切换按钮 |
 | `ui.home_intro` | `identity` | 首页简介区格局：`title`（站名大标题）/ `identity`（身份行大标题，推荐）/ `slogan`（description 大标题主张）/ `compact`（一行极简） |
 | `ui.intro_identity` | 由 `copyright.authors` 生成 | 身份行文案（identity/slogan/compact 三种格局使用） |
-| `ui.blog_section` | `post` | 文章所在 section |
+| `ui.blog_section` | `blog` | 文章所在 section；时间线位于 `/blog/` |
 | `ui.blog_index` / `blog_index_size` | `list` / `12` | `/post/` 区块列表形态与每页篇数 |
 | `ui.footer_style` | `slim` | 页脚形态 |
 | `ui.featured_image` | 未设置 | 题图模式：`banner / wash / hero` |
@@ -117,6 +117,41 @@ hugo server
 
 继承 OINK 的完整参数面（评论 giscus、分享、代码复制、图库等）见
 [OINK 文档](https://oink.pgsty.com/zh/)。
+
+## 自定义首页与自定义页面
+
+三种方式超越默认页面——都不需要改主题：
+
+1. **自定义首页**：`content/_index.md` 设 `home_html: true`，正文写任意 HTML 即整个首页
+   （主题已开启 Goldmark `unsafe`）。导航、页脚、检索、暗色模式保留；内容区不限宽、
+   无默认排版。文章时间线位于 `/blog/`。
+2. **自定义 HTML 页面**：任意内容文件声明 `layout: custom`，正文原样输出在站点外壳内
+   （保留导航 + 页脚），不限宽——见
+   [exampleSite/content/custom-html-demo.md](exampleSite/content/custom-html-demo.md)。
+3. **Landing 页面**：`layout: landing` + `sections` 列表，可组合 OINK 的 22 种区块
+   （hero、卡片、时间线、FAQ、步骤、metrics、markdown……）。条目是自带数据的 map：
+
+   ```yaml
+   ---
+   title: 我的小站
+   layout: landing
+   sections:
+     - type: hero
+       title_lines: [我的小站]
+       lead: 仅凭 front matter 拼出的完全自定义页面。
+     - type: cards
+       title: 我在做的事
+       columns: 2
+       items:
+         - title: 一
+           desc: …
+         - title: 二
+           desc: …
+   ---
+   ```
+
+   也可以把区块数据放到 `data/landing/<key>.yaml`（`sections: [hero, cards]` 加同级
+   `hero:` / `cards:` 键），页面里用 `landing: <key>` 引用。
 
 ## 自定义
 

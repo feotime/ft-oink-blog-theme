@@ -1,0 +1,70 @@
+{{- /* FT 主题覆盖：head-css.html（基于上游 v1.4.0 复制）。
+
+     与上游的差异（升级上游时需对照回填）：
+     开发模式（非 production）也给主样式表追加内容指纹。上游在开发模式
+     不指纹 —— URL 恒为 /scss/main.css，浏览器可能长期缓存旧副本，导致
+     改样式后页面不更新（SRI 亦会对不上）。指纹化后 URL 随内容变化，
+     开发与生产行为一致。Font Awesome 拼接资源内容稳定，保持不变。 */ -}}
+
+{{ $scssMain := "scss/main.scss" -}}
+{{/* Use Hugo Extended's built-in compiler; consumers need no external Sass
+     executable. Hugo 0.168 may report its upstream LibSass deprecation. */ -}}
+{{ $scss := resources.Get $scssMain
+      | toCSS (dict "enableSourceMap" (not hugo.IsProduction)) -}}
+{{/* Concatenate Font Awesome's official compiled CSS into one stable vendor
+     resource. Keep it separate from consumer SCSS so an ordinary theme or site
+     style edit does not invalidate the icon distribution. The target remains
+     under scss/ so Font Awesome's ../webfonts URLs keep their public shape. */ -}}
+{{ $fontAwesome := slice
+      (resources.Get "third_party/Font-Awesome/css/fontawesome.css")
+      (resources.Get "third_party/Font-Awesome/css/solid.css")
+      (resources.Get "third_party/Font-Awesome/css/regular.css")
+      (resources.Get "third_party/Font-Awesome/css/brands.css")
+      | resources.Concat "scss/fontawesome.css" -}}
+{{ $css := $scss -}}
+
+{{ if hugo.IsProduction -}}
+  {{ $fontAwesome = $fontAwesome | minify | fingerprint -}}
+  {{ $css = $css | minify | fingerprint -}}
+  <link rel="preload" href="{{ $css.RelPermalink }}" as="style" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
+{{ else -}}
+  {{- /* FT 差异：开发模式指纹化主样式表，杜绝浏览器缓存旧副本。 */ -}}
+  {{ $css = $css | fingerprint -}}
+{{ end -}}
+
+{{ with $fontAwesome -}}
+  <link href="{{ .RelPermalink }}" rel="stylesheet"
+  {{- with .Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end -}}
+  >
+{{ else -}}
+  {{ warnf "stylesheet: Font Awesome resources were not found; authored and theme icons will not render" -}}
+{{ end -}}
+
+{{ with $css -}}
+  <link href="{{ .RelPermalink }}" rel="stylesheet"
+  {{- with .Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end -}}
+  >
+{{ else -}}
+  {{ warnf "stylesheet: resource not found or CSS build failed: %s; the page will render unstyled" $scssMain -}}
+{{ end -}}
+
+{{/* Bootstrap publishes its RTL transform as a release artifact. Keep that
+consumer-side artifact local instead of invoking PostCSS/rtlcss during a Hugo
+build. The main bundle already supplies Bootstrap and project color tokens, so
+strip only the RTL artifact's first light/dark token blocks before publishing
+it. Directional rules remain later in the cascade; project token overrides keep
+their ordinary specificity and source order. */ -}}
+{{ if eq .Site.Language.Direction "rtl" -}}
+  {{ $rtl := resources.Get "third_party/bootstrap/dist/css/bootstrap.rtl.min.css" -}}
+  {{ $rtlContent := replaceRE `:root,\[data-bs-theme=light\]\{[^}]*\}` "" $rtl.Content 1 -}}
+  {{ $rtlContent = replaceRE `\[data-bs-theme=dark\]\{[^}]*\}` "" $rtlContent 1 -}}
+  {{ $rtl = resources.FromString "third_party/bootstrap/dist/css/bootstrap.rtl.oink.min.css" $rtlContent -}}
+  {{ if hugo.IsProduction -}}
+    {{ $rtl = $rtl | fingerprint -}}
+  {{ end -}}
+  <link href="{{ $rtl.RelPermalink }}" rel="stylesheet"
+  {{- with $rtl.Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end -}}
+  >
+{{ end -}}
+
+{{- /**/ -}}

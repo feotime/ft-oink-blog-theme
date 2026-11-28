@@ -78,16 +78,16 @@ Content layout (the key part: the post section's `_index.md` declares `type: blo
 
 ```
 content/
-├── _index.md          # home: title + description (the one-line intro)
+├── _index.md          # home: set home_html: true to write the whole page as custom HTML
 ├── about.md           # about page (menus.main)
 ├── archives.md        # archive page: layout: archives + menus.main
 ├── tags/_index.md     # tag index: title + menus.main
-└── post/
-    ├── _index.md      # cascade: type: blog / sidebar_enabled: false / breadcrumb: false …
-    └── my-first-post.md
+└── blog/
+    ├── _index.md      # /blog/ timeline; cascade: type: blog / sidebar_enabled: false …
+    └── my-first-post.md   # /blog/my-first-post/
 ```
 
-Copy the full cascade from [exampleSite/content/post/_index.md](exampleSite/content/post/_index.md). Then:
+Copy the full cascade from [exampleSite/content/blog/_index.md](exampleSite/content/blog/_index.md). Then:
 
 ```bash
 hugo server
@@ -108,13 +108,50 @@ Theme defaults live in [hugo.yaml](hugo.yaml); site config keys win. The common 
 | `ui.dark_mode` | `true` | Dark mode + toggle |
 | `ui.home_intro` | `identity` | Home intro layout: `title` (site name as heading) / `identity` (greeting heading, recommended) / `slogan` (description as the heading) / `compact` (single quiet line) |
 | `ui.intro_identity` | derived from `copyright.authors` | Identity line text used by identity/slogan/compact |
-| `ui.blog_section` | `post` | Section that holds the posts |
+| `ui.blog_section` | `blog` | Section that holds the posts; the timeline lives at `/blog/` |
 | `ui.blog_index` / `blog_index_size` | `list` / `12` | `/post/` listing form and page size |
 | `ui.footer_style` | `slim` | Footer variant |
 | `ui.featured_image` | unset | Featured image mode: `banner / wash / hero` |
 | `offline_search` | `true` | Offline full-text search (build-time index) |
 
 The full OINK parameter surface (giscus comments, share buttons, code copy, galleries…) is documented at [oink.pgsty.com](https://oink.pgsty.com/).
+
+## Custom home & custom pages
+
+Three ways to go beyond the stock blog pages — none require touching the theme:
+
+1. **Custom home**: set `home_html: true` in `content/_index.md` and write the whole
+   homepage as HTML in the file body (Goldmark `unsafe` is required, which the theme
+   enables). The navbar, footer, search and dark mode stay; the content area is yours —
+   no width cap, no default typography. The post timeline lives at `/blog/`.
+2. **Custom HTML pages**: any content file with `layout: custom` renders its body as
+   raw HTML inside the site shell (navbar + footer), unconstrained — see
+   [exampleSite/content/custom-html-demo.md](exampleSite/content/custom-html-demo.md).
+3. **Landing pages**: `layout: landing` + a `sections` list gives you 22 composable
+   section types from OINK (hero, cards, timeline, FAQ, steps, metrics, markdown…).
+   Entries are maps carrying their own data:
+
+   ```yaml
+   ---
+   title: My lab
+   layout: landing
+   sections:
+     - type: hero
+       title_lines: [My lab]
+       lead: A fully custom page from front matter alone.
+     - type: cards
+       title: Things I do
+       columns: 2
+       items:
+         - title: One
+           desc: …
+         - title: Two
+           desc: …
+   ---
+   ```
+
+   Alternatively keep section data in `data/landing/<key>.yaml` (`sections: [hero, cards]`
+   plus sibling `hero:` / `cards:` keys) and reference it with `landing: <key>`.
 
 ## Customization
 

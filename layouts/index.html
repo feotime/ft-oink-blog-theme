@@ -28,6 +28,11 @@
     {{ if partial "shell/navbar-enabled.html" . }}{{ partial "navbar.html" . }}{{ end }}
     <div class="container-fluid td-default td-outer">
       <main id="td-main-content" class="td-main" tabindex="-1">
+        {{- /* home_html: true 时首页正文即自定义 HTML（goldmark unsafe 下原样输出），
+             不限宽、不套默认排版；时间线由 /blog/ 承载。 */ -}}
+        {{ if .Params.home_html }}
+        <div class="ft-custom">{{ .Content }}</div>
+        {{ else }}
         <div class="td-content ft-home">
           <header class="ft-intro" data-td-home-intro="{{ $introMode }}">
             {{ if eq $introMode "compact" }}
@@ -64,6 +69,7 @@
           {{ partial "ft/timeline.html" (dict "pages" $pager.Pages) }}
           <div class="ft-home__pagination">{{ partial "pagination.html" . }}</div>
         </div>
+        {{ end }}
       </main>
       {{ partial "footer.html" . }}
     </div>

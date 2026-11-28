@@ -31,8 +31,10 @@ params:
     # 自定义；缺省时由顶层 params.copyright.authors 生成 "你好，我是 <authors>"，
     # 两者都缺省则回退站点标题。
     # 文章所在 section；首页/归档/标签的时间线按 `where .Site.RegularPages "Type" "blog"` 取数，
-    # 依赖 content/post/_index.md 的 cascade type: blog（见 exampleSite/content）。
-    blog_section: post
+    # 依赖 content/blog/_index.md 的 cascade type: blog（见 exampleSite/content）。
+    # 首页可整体改为自定义 HTML：content/_index.md 设 home_html: true 后，
+    # 其正文（任意 HTML）即整个首页；时间线由 /blog/ 承载。
+    blog_section: blog
     blog_index: list
     blog_index_size: 12
     footer_style: slim

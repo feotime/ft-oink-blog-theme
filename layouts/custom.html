@@ -1,0 +1,9 @@
+{{- /* FT 自定义 HTML 页面布局：正文即任意 HTML（goldmark unsafe 下原样输出）。
+     内容文件 front matter 声明 layout: custom 即启用；保留导航与页脚，
+     不套标题/栏宽等默认排版——版式完全由页面自己的 HTML 决定。
+     示例见 exampleSite/content/custom-html-demo.md。 */ -}}
+{{ define "main" -}}
+<div class="ft-custom">
+  {{ .Content }}
+</div>
+{{ end -}}
