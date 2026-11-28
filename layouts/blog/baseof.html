@@ -107,6 +107,10 @@
       var panel = document.getElementById('ft-mobile-toc-panel');
       var openBtn = document.querySelector('[data-ft-mobile-toc-open]');
       if (!box || !panel) return;
+      // 用户要求：移动端按钮挂到顶部菜单（导航栏右侧工具区，排在最右）。
+      // 无 JS 时按钮留在文章顶栏，功能不受影响。
+      var zone = document.querySelector('.td-nav-util-zone');
+      if (zone && openBtn) zone.appendChild(openBtn);
       function setOpen(open) {
         box.checked = open;
         if (openBtn) openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
