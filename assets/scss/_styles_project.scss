@@ -500,6 +500,17 @@ body {
   .td-site-header .td-nav-menu-zone {
     display: none;
   }
+
+  // 中间区隐藏后，右侧工具区（搜索/设置/目录）保持贴右对齐。
+  // 隐藏的菜单区不占网格位，工具区会掉进中间轨道——把网格改成两轨：
+  // 品牌列弹性撑满，工具区贴右。
+  .td-site-header .td-site-nav {
+    grid-template-columns: minmax(max-content, 1fr) auto;
+  }
+
+  .td-site-header .td-nav-util-zone {
+    justify-self: end;
+  }
 }
 
 // 脚本把按钮移入导航栏工具区后，与相邻图标按钮（搜索/外观）对齐
