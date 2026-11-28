@@ -511,6 +511,12 @@ body {
   .td-site-header .td-nav-util-zone {
     justify-self: end;
   }
+
+  // 移动端保留站名标题（主题 <lg 默认藏掉），字号略收以适配窄屏
+  .td-site-header .td-nav-title {
+    display: inline;
+    font-size: 1rem;
+  }
 }
 
 // 脚本把按钮移入导航栏工具区后，与相邻图标按钮（搜索/外观）对齐
