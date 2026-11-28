@@ -494,6 +494,14 @@ body {
   margin-inline-start: 0.25rem;
 }
 
+// <lg 时主题把导航中间的栏目链接塌成无文字图标（992px 以下隐藏标签），
+// 信息量为零——直接隐藏整个中间菜单区；移动端导航走首页链接与归档页。
+@media (max-width: 991.98px) {
+  .td-site-header .td-nav-menu-zone {
+    display: none;
+  }
+}
+
 // 脚本把按钮移入导航栏工具区后，与相邻图标按钮（搜索/外观）对齐
 .td-site-nav .ft-mobile-toc-btn {
   width: 34px;
